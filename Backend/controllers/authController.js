@@ -3,94 +3,161 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const generateToken = require('../utils/generateToken');
 
-const register = (req, res) => {
-    const { name, email, password, confirmPassword } = req.body;
+// Utility function to parse request body
+const getRequestBody = (req, callback) => {
+    let body = "";
+    req.on("data", (chunk) => { body += chunk.toString(); });
 
-    if (!name || !email || !password || !confirmPassword) {
-        return res.writeHead(400).end(JSON.stringify({ code: 400, message: "Required Fields are missing" }));
-    }
-
-    if (password !== confirmPassword) {
-        return res.writeHead(429).end(JSON.stringify({ code: 429, message: "Password and confirm password doesn't match." }));
-    }
-
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
-        if (err) return res.writeHead(500).end(JSON.stringify({ code: 500, message: "Server Error" }));
-
-        User.createUser(name, email, hashedPassword, (err, user) => {
-            if (err) {
-                return res.writeHead(409).end(JSON.stringify({ code: 409, message: "Email already exists" }));
-            }
-            res.writeHead(201).end(JSON.stringify({ status: "success", message: "User registered successfully", data: { user } }));
-        });
+    req.on("end", () => {
+        try {
+            callback(null, JSON.parse(body));
+        } catch (error) {
+            callback(error, null);
+        }
     });
 };
 
-const login = (req, res) => {
-    const { email, password } = req.body;
-
-    User.findByEmail(email, (err, user) => {
-        if (!user) {
-            return res.writeHead(401).end(JSON.stringify({ code: 401, message: "User not registered" }));
+// Register user
+const register = (req, res) => {
+    getRequestBody(req, (err, body) => {
+        if (err) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Invalid JSON format" }));
         }
 
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (!isMatch) {
-                return res.writeHead(401).end(JSON.stringify({ code: 401, message: "Invalid Credentials" }));
+        const { name, email, password, confirmPassword } = body;
+
+        if (!name || !email || !password || !confirmPassword) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Required Fields are missing" }));
+        }
+
+        if (password !== confirmPassword) {
+            res.writeHead(429);
+            return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
+        }
+
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) {
+                res.writeHead(500);
+                return res.end(JSON.stringify({ code: 500, message: "Server Error" }));
             }
 
-            const token = generateToken(user.id, user.email);
-            res.writeHead(200).end(JSON.stringify({ code: 200, message: "Login Successful", token }));
-        });
-    });
-};
+            User.createUser(name, email, hashedPassword, (err, user) => {
+                if (err) {
+                    res.writeHead(409);
+                    return res.end(JSON.stringify({ code: 409, message: "Email already exists" }));
+                }
 
-const  forgotPassword = (req, res) => {
-  const { email } = req.body;
-
-  User.findByEmail(email, (err, user) => {
-      if (!user) {
-          return res.writeHead(404).end(JSON.stringify({ code: 404, message: "No account found" }));
-      }
-
-      // Generate reset token (valid for 15 minutes)
-      const resetToken = jwt.sign({ email }, 'reset_secret_key', { expiresIn: '15m' });
-
-      // Store the reset token in the database
-      User.updateResetToken(email, resetToken, (err, success) => {
-          if (err || !success) {
-              return res.writeHead(500).end(JSON.stringify({ code: 500, message: "Failed to update reset token" }));
-          }
-
-          res.writeHead(200).end(JSON.stringify({
-              code: 200,
-              message: "Password reset email sent, check your inbox.",
-              token: resetToken
-          }));
-      });
-  });
-};
-
-const resetPassword = (req, res) => {
-    const { token, new_password, confirm_password } = req.body;
-
-    if (!token) return res.writeHead(400).end(JSON.stringify({ code: 400, message: "Missing Token" }));
-
-    if (new_password !== confirm_password) {
-        return res.writeHead(429).end(JSON.stringify({ code: 429, message: "Password and confirm password doesn't match." }));
-    }
-
-    jwt.verify(token, 'reset_secret_key', (err, decoded) => {
-        if (err) return res.writeHead(401).end(JSON.stringify({ code: 401, message: "Invalid Token or Expired Token" }));
-
-        bcrypt.hash(new_password, 10, (err, hashedPassword) => {
-            User.resetPassword(token, hashedPassword, (err, success) => {
-                if (!success) return res.writeHead(400).end(JSON.stringify({ code: 400, message: "Invalid Token" }));
-
-                res.writeHead(200).end(JSON.stringify({ code: 200, message: "Password reset successfully." }));
+                res.writeHead(201);
+                res.end(JSON.stringify({ status: "success", message: "User registered successfully", data: { user } }));
             });
         });
     });
 };
 
-module.exports = {register,login,resetPassword,forgotPassword};
+// Login user
+const login = (req, res) => {
+    getRequestBody(req, (err, body) => {
+        if (err) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Invalid JSON format" }));
+        }
+
+        const { email, password } = body;
+
+        User.findByEmail(email, (err, user) => {
+            if (!user) {
+                res.writeHead(401);
+                return res.end(JSON.stringify({ code: 401, message: "User not registered" }));
+            }
+
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+                if (!isMatch) {
+                    res.writeHead(401);
+                    return res.end(JSON.stringify({ code: 401, message: "Invalid Credentials" }));
+                }
+
+                const token = generateToken(user.id, user.email, user.role);
+                res.writeHead(200);
+                res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
+            });
+        });
+    });
+};
+
+// Forgot Password
+const forgotPassword = (req, res) => {
+    getRequestBody(req, (err, body) => {
+        if (err) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Invalid JSON format" }));
+        }
+
+        const { email } = body;
+
+        User.findByEmail(email, (err, user) => {
+            if (!user) {
+                res.writeHead(404);
+                return res.end(JSON.stringify({ code: 404, message: "No account found" }));
+            }
+
+            const resetToken = jwt.sign({ email }, 'reset_secret_key', { expiresIn: '15m' });
+
+            User.updateResetToken(email, resetToken, (err, success) => {
+                if (err || !success) {
+                    res.writeHead(500);
+                    return res.end(JSON.stringify({ code: 500, message: "Failed to update reset token" }));
+                }
+
+                res.writeHead(200);
+                res.end(JSON.stringify({ code: 200, message: "Password reset email sent.", token: resetToken }));
+            });
+        });
+    });
+};
+
+// Reset Password
+const resetPassword = (req, res) => {
+    getRequestBody(req, (err, body) => {
+        if (err) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Invalid JSON format" }));
+        }
+
+        const { token, new_password, confirm_password } = body;
+
+        if (!token) {
+            res.writeHead(400);
+            return res.end(JSON.stringify({ code: 400, message: "Missing Token" }));
+        }
+
+        if (new_password !== confirm_password) {
+            res.writeHead(429);
+            return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
+        }
+
+        jwt.verify(token, 'reset_secret_key', (err, decoded) => {
+            if (err) {
+                res.writeHead(401);
+                return res.end(JSON.stringify({ code: 401, message: "Invalid or Expired Token" }));
+            }
+
+            bcrypt.hash(new_password, 10, (err, hashedPassword) => {
+                User.resetPassword(token, hashedPassword, (err, success) => {
+                    if (!success) {
+                        res.writeHead(400);
+                        return res.end(JSON.stringify({ code: 400, message: "Invalid Token" }));
+                    }
+
+                    
+
+                    res.writeHead(200);
+                    res.end(JSON.stringify({ code: 200, message: "Password reset successfully." }));
+                });
+            });
+        });
+    });
+};
+
+module.exports = { register, login, resetPassword, forgotPassword };
