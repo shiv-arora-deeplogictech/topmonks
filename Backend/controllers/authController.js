@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const generateToken = require('../utils/generateToken');
 
-exports.register = (req, res) => {
+const register = (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
 
     if (!name || !email || !password || !confirmPassword) {
@@ -26,7 +26,7 @@ exports.register = (req, res) => {
     });
 };
 
-exports.login = (req, res) => {
+const login = (req, res) => {
     const { email, password } = req.body;
 
     User.findByEmail(email, (err, user) => {
@@ -45,7 +45,7 @@ exports.login = (req, res) => {
     });
 };
 
-exports.forgotPassword = (req, res) => {
+const  forgotPassword = (req, res) => {
   const { email } = req.body;
 
   User.findByEmail(email, (err, user) => {
@@ -71,7 +71,7 @@ exports.forgotPassword = (req, res) => {
   });
 };
 
-exports.resetPassword = (req, res) => {
+const resetPassword = (req, res) => {
     const { token, new_password, confirm_password } = req.body;
 
     if (!token) return res.writeHead(400).end(JSON.stringify({ code: 400, message: "Missing Token" }));
@@ -92,3 +92,5 @@ exports.resetPassword = (req, res) => {
         });
     });
 };
+
+module.exports = {register,login,resetPassword,forgotPassword};
