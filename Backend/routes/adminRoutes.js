@@ -5,7 +5,6 @@ const url = require('url');
 function adminRoutes(req, res) {
     res.setHeader('Content-Type', 'application/json');
     
-    const method = req.method;
 
     function handleAuth(allowedRoles, callback) {
         AuthMiddleware.authenticate(allowedRoles)(req, res, () => callback());

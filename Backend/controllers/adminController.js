@@ -1,4 +1,4 @@
-const InstructorRequest = require('../models/instructorRequests');
+const InstructorRequest = require('../modelController/instructorModelController');
 const Course = require('../modelController/adminModelController');
 const Role = require('../modelController/adminModelController');
 
@@ -17,15 +17,49 @@ class AdminController {
             let body = '';
             req.on('data', chunk => body += chunk.toString());
             req.on('end', async () => {
-                const { user } = JSON.parse(body);
-                await InstructorRequest.approve(user);
-                res.end(JSON.stringify({ message: 'Instructor request approved' }));
+                const { user_id, action, user } = JSON.parse(body);
+
+                // Fetch user details from instructor_requests
+                const instructor = await InstructorRequest.getRequestById(user_id);
+                if (!instructor || instructor.status !== 'pending') {
+                    return res.writeHead(404).end(JSON.stringify({ code: 404, message: 'User not found or not pending approval' }));
+                }
+
+                if (action === 'approve') {
+                    // Move user to the users table with role 'instructor'
+                    await InstructorRequest.approve(user);
+                    return res.writeHead(200).end(JSON.stringify({
+                        code: 200,
+                        message: 'Instructor request approved',
+                        user: {
+                            user_id: user_id,
+                            name: user.name,
+                            email: user.email,
+                            role: 'instructor',
+                            status: 'approved'
+                        }
+                    }));
+                } else if (action === 'decline') {
+                    // Update instructor_requests status to 'declined'
+                    await InstructorRequest.reject(user_id);
+                    return res.writeHead(200).end(JSON.stringify({
+                        code: 200,
+                        message: 'Instructor request declined',
+                        user: {
+                            user_id: user_id,
+                            status: 'declined'
+                        }
+                    }));
+                } else {
+                    return res.writeHead(400).end(JSON.stringify({ code: 400, message: 'Invalid request data' }));
+                }
             });
         } catch (err) {
-            res.end(JSON.stringify({ message: 'Internal Server Error' }));
+            res.writeHead(500).end(JSON.stringify({ code: 500, message: 'Internal Server Error' }));
         }
     }
-// not working due to no intergration
+
+    // not working due to no intergration
     static async getAllCourses(req, res) {
         try {
             const courses = await Course.getAll();
@@ -34,7 +68,7 @@ class AdminController {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
     }
-// not working due to no integration
+    // not working due to no integration
     static async deleteCourse(req, res) {
         try {
             let body = '';
