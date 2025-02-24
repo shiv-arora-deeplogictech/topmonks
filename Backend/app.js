@@ -3,7 +3,7 @@ const authRoutes = require('./routes/authRoutes');
 
 const server = http.createServer((req, res) => {
     
-        if(req.url.startsWith("/users")){
+        if(req.url.startsWith("/auth")){
             authRoutes(req,res);
         }
         else {

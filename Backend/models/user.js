@@ -1,18 +1,40 @@
 const db = require('../config/db');
 
+
+
+//////// Connected to the SQLite database.
+// home/deep/Projects/topmonks/topmonks/Backend/models/user.js:7
+// callback(err, { id: this.lastID, name, email });
+
+
+// TypeError: callback is not a function
+
+
 class User {
-    static createUser(name, email, hashedPassword, callback) {
-        const sql = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
-        db.run(sql, [name, email, hashedPassword], function (err) {
-            callback(err, { id: this.lastID, name, email });
+    static createUser(name, email, hashedPassword, role) {
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)`;
+            db.run(sql, [name, email, hashedPassword, role], function (err) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve({ id: this.lastID, name, email });
+            });
         });
     }
 
-    static findByEmail(email, callback) {
-        db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
-            callback(err, user);
+    static findByEmail(email) {
+        return new Promise((resolve, reject) => {
+            db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+                if (err) {
+                    reject(err); // Reject if there's an error
+                } else {
+                    resolve(user); // Resolve with the user data
+                }
+            });
         });
     }
+    
 
     static updateResetToken(email, token, callback) {
       db.run(
