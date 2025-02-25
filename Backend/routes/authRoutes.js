@@ -19,10 +19,6 @@ const authRoutes = (req,res)=>{
     } else {
         res.writeHead(404).end(JSON.stringify({ code: 404, message: "Not Found this one" }));
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d6d981 (Added the admin authentication)
 }
 
 module.exports = authRoutes;
