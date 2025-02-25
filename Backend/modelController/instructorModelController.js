@@ -1,6 +1,16 @@
 const db = require('../db');
 
 class InstructorRequest {
+
+    static async getAllPending() {
+        return new Promise((resolve, reject) => {
+            db.all('SELECT * FROM instructor_requests WHERE status = "pending"', [], (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    }
+    
     static async getRequestById(user_id) {
         return new Promise((resolve, reject) => {
             db.get('SELECT * FROM instructor_requests WHERE request_id = ?', [user_id], (err, row) => {

@@ -62,6 +62,7 @@ class AdminController {
     // not working due to no intergration
     static async getAllCourses(req, res) {
         try {
+            //here get all courses from nishant
             const courses = await Course.getAll();
             res.end(JSON.stringify({ message: 'Available Courses', courses }));
         } catch (err) {
@@ -75,6 +76,7 @@ class AdminController {
             req.on('data', chunk => body += chunk.toString());
             req.on('end', async () => {
                 const { course_id } = JSON.parse(body);
+                //here delete course from nishant
                 await Course.delete(course_id);
                 res.end(JSON.stringify({ message: 'Course deleted successfully' }));
             });
@@ -84,6 +86,7 @@ class AdminController {
     }
     static async getAllRoles(req, res) {
         try {
+            //here
             const roles = await Role.getAllRoles();
             res.end(JSON.stringify({ message: 'Available Roles', roles }));
         } catch (err) {

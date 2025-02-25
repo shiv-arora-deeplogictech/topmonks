@@ -1,6 +1,7 @@
 const db = require('../config/db');
 
 class Role {
+
     static async getAllRoles() {
         return new Promise((resolve, reject) => {
             db.all('SELECT DISTINCT role FROM users', [], (err, rows) => {
