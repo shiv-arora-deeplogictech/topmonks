@@ -2,7 +2,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../modelController/userModelController');
 const generateToken = require('../utils/generateToken');
+<<<<<<< HEAD
 const db =require('../config/db');
+=======
+const db = require("../config/db");
+>>>>>>> 0d6d981 (Added the admin authentication)
 
 // Utility function to parse request body
 const getRequestBody = (req) => {
@@ -99,7 +103,10 @@ const login = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 //Admin Login
+=======
+>>>>>>> 0d6d981 (Added the admin authentication)
 const adminLogin = async (req, res) => {
     try {
         const body = await getRequestBody(req);
