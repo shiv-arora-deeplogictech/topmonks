@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../modelController/userModelController');
 const generateToken = require('../utils/generateToken');
+const db =require('../config/db');
 
 // Utility function to parse request body
 const getRequestBody = (req) => {
@@ -60,12 +61,11 @@ const instructorRegister = async (req, res) => {
             res.writeHead(429);
             return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
         }
-        const role="instructor";
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.createUser(name, email, hashedPassword,role);
+        const user = await User.createInstructor(name, email, hashedPassword);
 
         res.writeHead(201);
-        res.end(JSON.stringify({ status: "success", message: "User registered successfully", data: { user } }));
+        res.end(JSON.stringify({ status: "success", message: "Instructor Request sent successfully", data: { user } }));
     } catch (error) {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
@@ -94,6 +94,33 @@ const login = async (req, res) => {
         res.writeHead(200);
         res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
     } catch (error) {
+        res.writeHead(500);
+        res.end(JSON.stringify({ code: 500, message: error.message }));
+    }
+};
+
+//Admin Login
+const adminLogin = async (req, res) => {
+    try {
+        const body = await getRequestBody(req);
+        const { email, password } = body;
+
+        db.get('SELECT * FROM users WHERE email = ? AND role = "admin"', [email], (err, user) => {
+            if (err || !user) {
+                return res.writeHead(401).end(JSON.stringify({ message: 'Invalid credentials or not an admin' }));
+            }
+
+            if (user.password !== password) {
+                return res.writeHead(401).end(JSON.stringify({ message: 'Invalid credentials' }));
+            }
+
+            // Generate JWT token
+            const token = generateToken(user.id, user.email, user.name, user.role);
+            res.writeHead(200);
+            res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
+        });
+    }
+    catch (error) {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
@@ -155,4 +182,4 @@ const resetPassword = async (req, res) => {
     }
 };
 
-module.exports = { userRegister, login, resetPassword, forgotPassword , instructorRegister};
+module.exports = { userRegister, login, resetPassword, forgotPassword , instructorRegister, adminLogin};

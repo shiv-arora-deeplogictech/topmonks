@@ -2,6 +2,7 @@ const http = require('http');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
+
 const server = http.createServer((req, res) => {
     
         if(req.url.startsWith("/auth")){
@@ -11,7 +12,7 @@ const server = http.createServer((req, res) => {
             adminRoutes(req, res);
         }
         else {
-            res.writeHead(404).end(JSON.stringify({ code: 404, message: "Not Found" }));
+            res.writeHead(404).end(JSON.stringify({ code: 404, message: "Not Found and main" }));
         }
     });
 

@@ -14,6 +14,18 @@ class UserModelController {
         });
     }
 
+    static createInstructor(name, email, hashedPassword) {
+        return new Promise((resolve, reject) => {
+            const sql = `INSERT INTO instructor_requests (name, email, password) VALUES (?, ?, ?)`;
+            db.run(sql, [name, email, hashedPassword], function (err) {
+                if (err) {
+                    return reject(err);
+                }
+                resolve({ id: this.lastID, name, email });
+            });
+        });
+    }
+
     static findByEmail(email) {
         return new Promise((resolve, reject) => {
             db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
@@ -48,6 +60,7 @@ class UserModelController {
             callback(err, this.changes > 0);
         });
     }
+
 }
 
 module.exports = UserModelController;
