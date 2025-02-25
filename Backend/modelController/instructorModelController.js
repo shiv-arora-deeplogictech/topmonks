@@ -14,17 +14,12 @@ class InstructorRequest {
         return new Promise((resolve, reject) => {
             db.run('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "instructor")',
                 [user.name, user.email, user.password], function (err) {
-                    if (err) reject(err);
-
+                    if (err) return reject(err);
                     db.run('UPDATE instructor_requests SET status = "approved" WHERE request_id = ?', [user.user_id], function (err) {
                         if (err) reject(err);
-                        
-                        db.run('DELETE FROM instructor_requests WHERE request_id = ?', [user.user_id], function (err) {
-                            if (err) reject(err);
-                            else resolve();
-                        });
+                        else resolve();
                     });
-                });
+             });
         });
     }
 
