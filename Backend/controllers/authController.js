@@ -60,12 +60,11 @@ const instructorRegister = async (req, res) => {
             res.writeHead(429);
             return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
         }
-        const role="instructor";
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.createUser(name, email, hashedPassword,role);
+        const user = await User.createInstructor(name, email, hashedPassword);
 
         res.writeHead(201);
-        res.end(JSON.stringify({ status: "success", message: "User registered successfully", data: { user } }));
+        res.end(JSON.stringify({ status: "success", message: "Instructor Request sent successfully", data: { user } }));
     } catch (error) {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
