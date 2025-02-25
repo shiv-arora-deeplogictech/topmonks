@@ -16,7 +16,7 @@ class UserModelController {
 
     static createInstructor(name, email, hashedPassword) {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO instructor_requests (name, email, password, status) VALUES (?, ?, ?, "pending")`;
+            const sql = `INSERT INTO instructor_requests (name, email, password) VALUES (?, ?, ?)`;
             db.run(sql, [name, email, hashedPassword], function (err) {
                 if (err) {
                     return reject(err);
