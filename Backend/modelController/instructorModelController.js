@@ -20,12 +20,12 @@ class InstructorRequest {
         });
     }
 
-    static async approve(user) {
+    static async approve(user_id,user) {
         return new Promise((resolve, reject) => {
             db.run('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, "instructor")',
                 [user.name, user.email, user.password], function (err) {
                     if (err) return reject(err);
-                    db.run('UPDATE instructor_requests SET status = "approved" WHERE request_id = ?', [user.user_id], function (err) {
+                    db.run('UPDATE instructor_requests SET status = "approved" WHERE request_id = ?', [user_id], function (err) {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -35,7 +35,7 @@ class InstructorRequest {
 
     static async reject(user_id) {
         return new Promise((resolve, reject) => {
-            db.run('UPDATE instructor_requests SET status = "declined" WHERE request_id = ?', [user_id], function (err) {
+            db.run('UPDATE instructor_requests SET status = "rejected" WHERE request_id = ?', [user_id], function (err) {
                 if (err) reject(err);
                 else resolve();
             });

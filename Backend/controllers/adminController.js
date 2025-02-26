@@ -27,7 +27,7 @@ class AdminController {
 
                 if (action === 'approve') {
                     // Move user to the users table with role 'instructor'
-                    await InstructorRequest.approve(user);
+                    await InstructorRequest.approve(user_id,user);
                     return res.writeHead(200).end(JSON.stringify({
                         code: 200,
                         message: 'Instructor request approved',
@@ -39,7 +39,7 @@ class AdminController {
                             status: 'approved'
                         }
                     }));
-                } else if (action === 'decline') {
+                } else if (action === 'reject') {
                     // Update instructor_requests status to 'declined'
                     await InstructorRequest.reject(user_id);
                     return res.writeHead(200).end(JSON.stringify({
