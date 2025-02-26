@@ -19,7 +19,7 @@ function adminRoutes(req, res) {
     } else if (req.url === '/admin/courses' && req.method === 'DELETE') {
         handleAuth(['admin'], () => AdminController.deleteCourse(req, res));
     } else if (req.url === '/admin/users' && req.method === 'GET') {
-        handleAuth(['admin'], () => AdminController.getAllUsers(req, res));
+        handleAuth(['admin'], () => AdminController.getUsers(req, res));
     } else if (req.url === '/admin/users' && req.method === 'DELETE') {
         handleAuth(['admin'], () => AdminController.deleteUser(req, res));
     } else {

@@ -1,6 +1,6 @@
 const InstructorRequest = require('../modelController/instructorModelController');
 const Course = require('../modelController/adminModelController');
-const Role = require('../modelController/adminModelController');
+const User = require('../modelController/adminModelController');
 
 class AdminController {
     static async viewInstructorRequests(req, res) {
@@ -84,7 +84,7 @@ class AdminController {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
     }
-    static async getAllUsers(req, res) {
+    static async getUsers(req, res) {
         try {
             //here
             const users = await User.getAllUsers();
@@ -100,8 +100,8 @@ class AdminController {
             req.on('data', chunk => body += chunk.toString());
             req.on('end', async () => {
                 const { userId } = JSON.parse(body);
-                await Role.deleteUser(userId);
-                res.end(JSON.stringify({ message: `User with'${userId}' deleted successfully` }));
+                await User.deleteUser(userId);
+                res.end(JSON.stringify({ message: `User with ${userId} deleted successfully` }));
             });
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
