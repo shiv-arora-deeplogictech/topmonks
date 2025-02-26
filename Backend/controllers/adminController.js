@@ -84,24 +84,24 @@ class AdminController {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
     }
-    static async getAllRoles(req, res) {
+    static async getAllUsers(req, res) {
         try {
             //here
-            const roles = await Role.getAllRoles();
-            res.end(JSON.stringify({ message: 'Available Roles', roles }));
+            const users = await User.getAllUsers();
+            res.end(JSON.stringify({ message: 'Available Users', users }));
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
     }
 
-    static async deleteRole(req, res) {
+    static async deleteUser(req, res) {
         try {
             let body = '';
             req.on('data', chunk => body += chunk.toString());
             req.on('end', async () => {
-                const { role } = JSON.parse(body);
-                await Role.deleteRole(role);
-                res.end(JSON.stringify({ message: `Role '${role}' deleted successfully` }));
+                const { userId } = JSON.parse(body);
+                await Role.deleteUser(userId);
+                res.end(JSON.stringify({ message: `User with'${userId}' deleted successfully` }));
             });
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));

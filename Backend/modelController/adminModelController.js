@@ -1,19 +1,19 @@
 const db = require('../config/db');
 
-class Role {
+class User {
 
-    static async getAllRoles() {
+    static async getAllUsers() {
         return new Promise((resolve, reject) => {
-            db.all('SELECT DISTINCT role FROM users', [], (err, rows) => {
+            db.all('SELECT * FROM users', [], (err, rows) => {
                 if (err) reject(err);
                 else resolve(rows);
             });
         });
     }
 
-    static async deleteRole(roleName) {
+    static async deleteUser(userId) {
         return new Promise((resolve, reject) => {
-            db.run('UPDATE users SET role = NULL WHERE role = ?', [roleName], function(err) {
+            db.run('DELETE FROM users WHERE id = ?', [userId], function(err) {
                 if (err) reject(err);
                 else resolve();
             });
@@ -21,4 +21,4 @@ class Role {
     }
 }
 
-module.exports = Role;
+module.exports = User;

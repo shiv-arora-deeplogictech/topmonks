@@ -18,10 +18,10 @@ function adminRoutes(req, res) {
         handleAuth(['admin'], () => AdminController.getAllCourses(req, res));
     } else if (req.url === '/admin/courses' && req.method === 'DELETE') {
         handleAuth(['admin'], () => AdminController.deleteCourse(req, res));
-    } else if (req.url === '/admin/roles' && req.method === 'GET') {
-        handleAuth(['admin'], () => AdminController.getAllRoles(req, res));
-    } else if (req.url === '/admin/roles' && req.method === 'DELETE') {
-        handleAuth(['admin'], () => AdminController.deleteRole(req, res));
+    } else if (req.url === '/admin/users' && req.method === 'GET') {
+        handleAuth(['admin'], () => AdminController.getAllUsers(req, res));
+    } else if (req.url === '/admin/users' && req.method === 'DELETE') {
+        handleAuth(['admin'], () => AdminController.deleteUser(req, res));
     } else {
         res.writeHead(404).end(JSON.stringify({ code: 404, message: "Not Found" }));
     }
