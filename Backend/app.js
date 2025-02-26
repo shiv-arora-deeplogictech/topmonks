@@ -8,6 +8,11 @@ const server = http.createServer((req, res) => {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allowed methods
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allowed headers
 
+        if (req.method === 'OPTIONS') {
+            res.writeHead(204); // No Content
+            return res.end();
+        }
+        
         if(req.url.startsWith("/auth")){
             authRoutes(req,res);
         }
