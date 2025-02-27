@@ -2,17 +2,17 @@ const InstructorRequest = require('../modelController/instructorModelController'
 const Course = require('../modelController/adminModelController');
 const User = require('../modelController/adminModelController');
 
-class AdminController {
-    static async viewInstructorRequests(req, res) {
+const AdminController = {
+    async viewInstructorRequests(req, res) {
         try {
             const requests = await InstructorRequest.getAllPending();
             res.end(JSON.stringify({ message: 'Pending Instructor Requests', requests }));
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
-    }
+    },
 
-    static async approveInstructor(req, res) {
+    async approveInstructor(req, res) {
         try {
             let body = '';
             req.on('data', chunk => body += chunk.toString());
@@ -57,10 +57,10 @@ class AdminController {
         } catch (err) {
             res.writeHead(500).end(JSON.stringify({ code: 500, message: 'Internal Server Error' }));
         }
-    }
+    },
 
     // not working due to no intergration
-    static async getAllCourses(req, res) {
+    async getAllCourses(req, res) {
         try {
             //here get all courses from nishant
             const courses = await Course.getAll();
@@ -68,9 +68,9 @@ class AdminController {
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
-    }
+    },
     // not working due to no integration
-    static async deleteCourse(req, res) {
+    async deleteCourse(req, res) {
         try {
             let body = '';
             req.on('data', chunk => body += chunk.toString());
@@ -83,8 +83,8 @@ class AdminController {
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
-    }
-    static async getUsers(req, res) {
+    },
+    async getUsers(req, res) {
         try {
             //here
             const users = await User.getAllUsers();
@@ -92,9 +92,9 @@ class AdminController {
         } catch (err) {
             res.end(JSON.stringify({ message: 'Internal Server Error' }));
         }
-    }
+    },
 
-    static async deleteUser(req, res) {
+    async deleteUser(req, res) {
         try {
             let body = '';
             req.on('data', chunk => body += chunk.toString());

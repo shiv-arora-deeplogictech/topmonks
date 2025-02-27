@@ -6,9 +6,9 @@ const generateToken = require('../utils/generateToken');
 const db =require('../config/db');
 
 
-
+const adminController = {
 // Utility function to parse request body
-const getRequestBody = (req) => {
+async getRequestBody (req){
     return new Promise((resolve, reject) => {
         let body = "";
         req.on("data", (chunk) => { body += chunk.toString(); });
@@ -20,12 +20,12 @@ const getRequestBody = (req) => {
             }
         });
     });
-};
+},
 
 // Register user
-const userRegister = async (req, res) => {
+async userRegister (req, res){
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { name, email, password, confirmPassword } = body;
 
         if (!name || !email || !password || !confirmPassword) {
@@ -47,12 +47,12 @@ const userRegister = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
 //Register Instructor
-const instructorRegister = async (req, res) => {
+async instructorRegister (req, res) {
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { name, email, password, confirmPassword } = body;
 
         if (!name || !email || !password || !confirmPassword) {
@@ -73,12 +73,12 @@ const instructorRegister = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
 // Login user
-const login = async (req, res) => {
+async login (req, res) {
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { email, password } = body;
 
         const user = await User.findByEmail(email);
@@ -100,11 +100,11 @@ const login = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
-const adminLogin = async (req, res) => {
+async adminLogin (req, res) {
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { email, password } = body;
 
         db.get('SELECT * FROM users WHERE email = ? AND role = "admin"', [email], (err, user) => {
@@ -126,12 +126,12 @@ const adminLogin = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
 // Forgot Password
-const forgotPassword = async (req, res) => {
+async forgotPassword (req, res){
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { email } = body;
 
         const user = await User.findByEmail(email);
@@ -149,12 +149,12 @@ const forgotPassword = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
 // Reset Password
-const resetPassword = async (req, res) => {
+async resetPassword (req, res) {
     try {
-        const body = await getRequestBody(req);
+        const body = await this.getRequestBody(req);
         const { token, new_password, confirm_password } = body;
 
         if (!token) {
@@ -182,6 +182,8 @@ const resetPassword = async (req, res) => {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
     }
-};
+},
 
-module.exports = { userRegister, login, resetPassword, forgotPassword , instructorRegister, adminLogin};
+}
+
+module.exports = adminController;

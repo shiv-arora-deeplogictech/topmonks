@@ -1,13 +1,16 @@
 const http = require('http');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const AuthMiddleware = require('./middlewares/authMiddleware');
 
 
 const server = http.createServer((req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*'); // Allows requests from any origin
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allowed methods
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allowed headers
-
+        function handleAuth(allowedRoles, callback) {
+            AuthMiddleware.authenticate(allowedRoles)(req, res, () => callback());
+        }
         if (req.method === 'OPTIONS') {
             res.writeHead(204); // No Content
             return res.end();
@@ -17,7 +20,7 @@ const server = http.createServer((req, res) => {
             authRoutes(req,res);
         }
         else if (req.url.startsWith("/admin")) {
-            adminRoutes(req, res);
+            handleAuth(['admin'], () => adminRoutes(req, res));
         }
         else {
             res.writeHead(404).end(JSON.stringify({ code: 404, message: "Not Found and main" }));

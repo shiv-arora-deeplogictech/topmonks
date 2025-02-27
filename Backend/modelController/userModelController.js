@@ -1,8 +1,8 @@
 const db = require('../models/user');
 
 
-class UserModelController {
-    static createUser(name, email, hashedPassword, role) {
+const UserModelController = {
+     createUser(name, email, hashedPassword, role) {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)`;
             db.run(sql, [name, email, hashedPassword, role], function (err) {
@@ -12,9 +12,9 @@ class UserModelController {
                 resolve({ id: this.lastID, name, email });
             });
         });
-    }
+    },
 
-    static createInstructor(name, email, hashedPassword) {
+    createInstructor(name, email, hashedPassword) {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO instructor_requests (name, email, password) VALUES (?, ?, ?)`;
             db.run(sql, [name, email, hashedPassword], function (err) {
@@ -24,9 +24,9 @@ class UserModelController {
                 resolve({ id: this.lastID, name, email });
             });
         });
-    }
+    },
 
-    static findByEmail(email) {
+    findByEmail(email) {
         return new Promise((resolve, reject) => {
             db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
                 if (err) {
@@ -36,10 +36,10 @@ class UserModelController {
                 }
             });
         });
-    }
+    },
     
 
-    static updateResetToken(email, token, callback) {
+     updateResetToken(email, token, callback) {
       db.run(
           `UPDATE users SET reset_token = ?, reset_token_expiry = DATETIME('now', '+15 minutes') WHERE email = ?`,
           [token,email],
@@ -52,14 +52,14 @@ class UserModelController {
               callback(null, this.changes > 0);  // `this.changes` now works
           }
       );
-  }
+  },
   
 
-    static resetPassword(token, newPassword, callback) {
+    resetPassword(token, newPassword, callback) {
         db.run(`UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL  WHERE reset_token = ?`, [newPassword, token], function (err) {
             callback(err, this.changes > 0);
         });
-    }
+    },
 
 }
 
