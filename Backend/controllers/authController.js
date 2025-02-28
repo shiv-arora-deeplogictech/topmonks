@@ -1,7 +1,9 @@
+require('dotenv').config();
+const RESET_SECRET_KEY = process.env.JWT_RESET_SECRET;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../modelController/userModelController');
-const generateToken = require('../utils/generateToken');
+const resetTokens = require('../utils/generateToken');
 
 const db =require('../config/db');
 
@@ -91,9 +93,9 @@ async login (req, res) {
         if (!isMatch) {
             res.writeHead(401);
             return res.end(JSON.stringify({ code: 401, message: "Invalid Credentials" }));
-        }
+            }
 
-        const token = generateToken(user.id, user.email, user.name, user.role);
+        const token = resetTokens.generateToken(user.id, user.email, user.name, user.role);
         res.writeHead(200);
         res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
     } catch (error) {
@@ -117,7 +119,7 @@ async adminLogin (req, res) {
             }
 
             // Generate JWT token
-            const token = generateToken(user.id, user.email, user.name, user.role);
+            const token = resetTokens.generateToken(user.id, user.email, user.name, user.role);
             res.writeHead(200);
             res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
         });
@@ -139,8 +141,7 @@ async forgotPassword (req, res){
             res.writeHead(404);
             return res.end(JSON.stringify({ code: 404, message: "No account found" }));
         }
-
-        const resetToken = jwt.sign({ email }, 'reset_secret_key', { expiresIn: '15m' });
+        const resetToken = resetTokens.resetGenerateToken(email);
         await User.updateResetToken(email, resetToken);
 
         res.writeHead(200);
@@ -167,7 +168,7 @@ async resetPassword (req, res) {
             return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
         }
 
-        const decoded = jwt.verify(token, 'reset_secret_key');
+        const decoded = jwt.verify(token, RESET_SECRET_KEY);
         const hashedPassword = await bcrypt.hash(new_password, 10);
 
         const success = await User.resetPassword(token, hashedPassword);

@@ -39,27 +39,38 @@ const UserModelController = {
     },
     
 
-     updateResetToken(email, token, callback) {
-      db.run(
-          `UPDATE users SET reset_token = ?, reset_token_expiry = DATETIME('now', '+15 minutes') WHERE email = ?`,
-          [token,email],
-
-          function (err) {  // Use a regular function instead of an arrow function
-              if (err) {
-                  console.error("DB Error:", err);
-                  return callback(err, false);
-              }
-              callback(null, this.changes > 0);  // `this.changes` now works
-          }
-      );
-  },
+    updateResetToken(email, token) {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE users SET reset_token = ?, reset_token_expiry = DATETIME('now', '+15 minutes') WHERE email = ?`,
+                [token, email],
+                function (err) {
+                    if (err) {
+                        console.error("DB Error:", err);
+                        return reject(err);
+                    }
+                    resolve(this.changes > 0); // Resolving true if update was successful
+                }
+            );
+        });
+    },    
   
 
-    resetPassword(token, newPassword, callback) {
-        db.run(`UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL  WHERE reset_token = ?`, [newPassword, token], function (err) {
-            callback(err, this.changes > 0);
+    resetPassword(token, newPassword) {
+        return new Promise((resolve, reject) => {
+            db.run(
+                `UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?`,
+                [newPassword, token],
+                function (err) {
+                    if (err) {
+                        return reject(err);
+                    }
+                    resolve(this.changes > 0); // Resolving true if update was successful
+                }
+            );
         });
     },
+    
 
 }
 
