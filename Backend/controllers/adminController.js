@@ -59,31 +59,7 @@ const AdminController = {
         }
     },
 
-    // not working due to no intergration
-    async getAllCourses(req, res) {
-        try {
-            //here get all courses from nishant
-            const courses = await Course.getAll();
-            res.end(JSON.stringify({ message: 'Available Courses', courses }));
-        } catch (err) {
-            res.end(JSON.stringify({ message: 'Internal Server Error' }));
-        }
-    },
-    // not working due to no integration
-    async deleteCourse(req, res) {
-        try {
-            let body = '';
-            req.on('data', chunk => body += chunk.toString());
-            req.on('end', async () => {
-                const { course_id } = JSON.parse(body);
-                //here delete course from nishant
-                await Course.delete(course_id);
-                res.end(JSON.stringify({ message: 'Course deleted successfully' }));
-            });
-        } catch (err) {
-            res.end(JSON.stringify({ message: 'Internal Server Error' }));
-        }
-    },
+
     async getUsers(req, res) {
         try {
             //here
