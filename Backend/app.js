@@ -3,6 +3,8 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/userRoutes");
 const instructorRoutes = require("./routes/instructorRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const fs=require('fs');
 const options = {
     key: fs.readFileSync('server.key'),
@@ -20,27 +22,22 @@ const server = https.createServer(options,(req, res) => {
     if (req.method === "OPTIONS") {
         res.setHeader("status", 204); // No Content
         return res.end();
-    }
-
-    // Route Handling
-    if (req.url.startsWith("/user")) {
+    } else if (req.url.startsWith("/user")) {
         return userRoutes(req, res); // Handle user-related routes
-    } 
-    
-    if (req.url.startsWith("/instructor")) {
+    } else if (req.url.startsWith("/instructor")) {
         return instructorRoutes(req, res); // Handle instructor separately
-    }
-
-    if(req.url.startsWith("/course")){
+    } else if(req.url.startsWith("/course")){
         return courseRoutes(req,res);
-    }
-
-    if(req.url.startsWith("/category")){
+    } else if(req.url.startsWith("/category")){
         return categoryRoutes(req,res);
-      }
-
+    } else if(req.url.startsWith("/auth")){
+        authRoutes(req,res);
+    } else if (req.url.startsWith("/admin")) {
+        handleAuth(['admin'], () => adminRoutes(req, res));
+    } else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Route Not Found" }));
+    }
 });
 
 const PORT = 5000;
