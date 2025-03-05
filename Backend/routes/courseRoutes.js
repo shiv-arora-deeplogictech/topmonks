@@ -18,7 +18,7 @@ function courseRoutes(req, res) {
         return courseController.getInstructorSingleCourse(req, res);
     }
 
-    if (req.method === "GET" && req.url.startsWith("/instructor/course/togglePublishCourse")) {
+    if (req.method === "PATCH" && req.url.startsWith("/instructor/course/togglePublishCourse")) {
         return courseController.togglePublishCourse(req, res);
     }
 
