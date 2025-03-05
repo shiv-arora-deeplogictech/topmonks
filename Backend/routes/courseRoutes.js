@@ -53,6 +53,9 @@ function courseRoutes(req, res) {
     if (req.method === "GET" && req.url.startsWith("/user/course/getCompletedCourse")) {
         return courseController.getCompletedCourses(req, res);
     }
+    if (req.method === "PATCH" && req.url.startsWith("/user/course/enrollUser")) {
+        return courseController.enrollUser(req, res);
+    }
 
 }
 

@@ -332,7 +332,38 @@ async getCompletedCourses(userId) {
             else resolve(rows);
         });
     });
+},
+
+async enrollUserModel(courseId, userId) {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT enrolled FROM courses WHERE course_id = ?`, [courseId], (err, course) => {
+            if (err) return reject(err);
+            if (!course) return reject(new Error("Course not found"));
+
+            let enrolledUsers = course.enrolled ? course.enrolled.split(",").map(id => id.trim()) : [];
+
+            if (enrolledUsers.includes(userId.toString())) {
+                return reject(new Error("User already enrolled"));
+            }
+
+            enrolledUsers.push(userId.toString()); // Add userId to the list
+
+            const updatedEnrolled = enrolledUsers.join(","); // Convert back to comma-separated string
+
+            db.run(
+                `UPDATE courses SET enrolled = ? WHERE course_id = ?`,
+                [updatedEnrolled, courseId],
+                function (err) {
+                    if (err) return reject(err);
+                    resolve({ message: "User enrolled successfully", enrolled: updatedEnrolled });
+                }
+            );
+        });
+    });
 }
+
+
+
 }
 
 
