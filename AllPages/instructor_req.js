@@ -73,12 +73,12 @@ function highlightActivePage() {
 // Function to fetch instructor requests from the backend
 async function fetchAndDisplayInstructorRequests() {
     try {
-        const token = localStorage.getItem("token");
+        /*const token = localStorage.getItem("token");
         if (!token) {
             alert("You are not logged in. Redirecting to login page...");
-            window.location.href = "login.html";
+            window.location.href = "/AdminPanel/AuthPages/login.html";
             return;
-        }
+        }*/
 
         const response = await fetch("https://localhost:5000/admin/main", {
             method: "GET",
@@ -160,12 +160,12 @@ function populateTable(requests) {
 // Function to handle permission changes (approve/reject)
 async function handlePermissionChange(requestId, action) {
     try {
-        const token = localStorage.getItem("token");
+        /*const token = localStorage.getItem("token");
         if (!token) {
             alert("You are not logged in. Redirecting to login page...");
-            window.location.href = "login.html";
+            window.location.href = "/AdminPanel/AuthPages/login.html";
             return;
-        }
+        }*/
 
         const response = await fetch(`https://localhost:5000/admin/main`, {
             method: "POST",

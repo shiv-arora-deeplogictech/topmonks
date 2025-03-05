@@ -103,6 +103,61 @@
   color: #50b5ce;
   font-weight: bold;
 }
+/* Super Admin Styling */
+.super-admin {
+  display: flex;
+  justify-content: center;
+  
+  color: rgb(1, 0, 0);
+  font-weight: bold;
+  font-size: 25px;
+}
+
+/* Admin Panel Title */
+
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu button i {
+  margin-right: 10px;
+  color: #f44336;
+}
+
+.dropdown-menu button:hover {
+  background: #f8f9fa;
+}
+
+/* Show dropdown on hover */
+.profile-dropdown:hover .dropdown-menu {
+  display: block;
+}
 
 /* Responsive */
 @media screen and (max-width: 768px) {
