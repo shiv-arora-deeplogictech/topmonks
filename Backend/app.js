@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const instructorRoutes = require("./routes/instructorRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const AuthMiddleware = require("./middlewares/authMiddleware");
 const fs=require('fs');
 const options = {
     key: fs.readFileSync('server.key'),
@@ -17,6 +18,10 @@ const server = https.createServer(options,(req, res) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Content-Type","application/json" );
+
+    function handleAuth(allowedRoles, callback) {
+        AuthMiddleware.authenticate(allowedRoles)(req, res, () => callback());
+    }
 
     // Handle Preflight Request (OPTIONS)
     if (req.method === "OPTIONS") {
