@@ -285,16 +285,19 @@ async getUnenrolledCourses(userId) {
 async getPendingCourses(userId) {
     return new Promise((resolve, reject) => {
         const query = `
-             SELECT c.*
-                FROM courses c
-                JOIN (
-                    SELECT course_id, COUNT(*) AS total_modules,
-                           SUM(completed) AS completed_modules
-                    FROM modules
-                    GROUP BY course_id
-                ) m ON c.course_id = m.course_id
-                WHERE m.total_modules > m.completed_modules;
-            `;
+        SELECT c.*
+        FROM courses c
+        JOIN (
+            SELECT course_id, COUNT(*) AS total_modules, SUM(completed) AS completed_modules
+            FROM modules
+            GROUP BY course_id
+        ) m ON c.course_id = m.course_id
+        WHERE m.total_modules > m.completed_modules
+        AND EXISTS (
+            SELECT 1 FROM json_each(c.enrolled) 
+            WHERE value = ?
+        );
+    `;
 
         db.all(query, [userId], (err, rows) => {
             if (err) {
@@ -309,16 +312,20 @@ async getPendingCourses(userId) {
 async getCompletedCourses(userId) {
     return new Promise((resolve, reject) => {
         const query = `
-                SELECT c.*
-                FROM courses c
-                JOIN (
-                    SELECT course_id, COUNT(*) AS total_modules,
-                           SUM(completed) AS completed_modules
-                    FROM modules
-                    GROUP BY course_id
-                ) m ON c.course_id = m.course_id
-                WHERE m.total_modules = m.completed_modules;
-            `;
+            SELECT c.*
+            FROM courses c
+            JOIN (
+                SELECT course_id, COUNT(*) AS total_modules,
+                       SUM(completed) AS completed_modules
+                FROM modules
+                GROUP BY course_id
+            ) m ON c.course_id = m.course_id
+            WHERE m.total_modules = m.completed_modules
+            AND EXISTS (
+                SELECT 1 FROM json_each(c.enrolled) 
+                WHERE value = ?
+            );
+        `;
 
         db.all(query, [userId], (err, rows) => {
             if (err) reject(err);
@@ -326,12 +333,6 @@ async getCompletedCourses(userId) {
         });
     });
 }
-
-
-
-
-
-
 }
 
 
