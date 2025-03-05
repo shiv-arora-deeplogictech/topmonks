@@ -47,20 +47,35 @@ async upsertSubmodule(submodule, moduleId) {
 },
 
 // Not used anywhere in the code
-async getSubmodulesByModuleId(moduleId) {
+async getSubmodulesByModuleId(moduleId, userId) {
     return new Promise((resolve, reject) => {
-        db.all(
-            `SELECT submodule_id, submodule_name, submodule_description, module_id, created_at 
-             FROM submodules 
-             WHERE module_id = ?`,
+        db.get(
+            `SELECT enrolled FROM courses WHERE course_id = 
+                (SELECT course_id FROM modules WHERE module_id = ?)`,
             [moduleId],
-            (err, submodules) => {
+            (err, course) => {
                 if (err) return reject(err);
-                resolve(submodules);
+                if (!course) return resolve([]);
+
+                const enrolledUsers = JSON.parse(course.enrolled || "[]"); // Parse enrolled users
+                const isEnrolled = enrolledUsers.includes(userId); // Check if user is enrolled
+
+                db.all(
+                    `SELECT submodule_id, submodule_name, submodule_description, module_id, created_at 
+                    ${isEnrolled ? ', video' : ''} 
+                     FROM submodules 
+                     WHERE module_id = ?`,
+                    [moduleId],
+                    (err, submodules) => {
+                        if (err) return reject(err);
+                        resolve(submodules);
+                    }
+                );
             }
         );
     });
 }
+
 };
 
 module.exports = submoduleModelController;

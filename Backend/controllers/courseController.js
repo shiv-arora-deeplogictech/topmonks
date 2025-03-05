@@ -407,7 +407,34 @@ async getCourseInfo(req, res) {
     const courseId = req.url.split("/")[4];
 
     try {
-        const row = await courseModelController.getCourseInfoModel(courseId);
+
+        const authHeader = req.headers["authorization"];
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ code: 401, message: "Unauthorized: Missing token" }));
+        }
+
+        const token = authHeader.split(" ")[1]; 
+        
+        // Verify Token
+        let decoded;
+        try {
+            decoded = jwt.verify(token, SECRET_KEY); 
+        } catch (err) {
+            console.error("JWT Verification Error:", err);
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ message: 'Forbidden: Invalid token' }));
+        }
+
+        // Extract userId from Token
+        const userId = decoded.id; 
+        console.log("User ID:", userId);
+
+        if (!userId) {
+            res.writeHead(403, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ code: 403, message: "Forbidden: Invalid token payload" }));
+        }
+        const row = await courseModelController.getCourseInfoModel(courseId,userId);
         
         if (!row) {
             res.setHeader("status", 404)

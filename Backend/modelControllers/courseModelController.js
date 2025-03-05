@@ -215,7 +215,7 @@ async getCoursesByCategoryModel(categoryId) {
     });
 },
 
-async getCourseInfoModel(courseId) {
+async getCourseInfoModel(courseId,userId) {
     return new Promise((resolve, reject) => {
         db.get(
             `SELECT courses.course_id, courses.course_title, courses.course_description, 
@@ -229,7 +229,7 @@ async getCourseInfoModel(courseId) {
 
                 try {
                     // Fetch modules and submodules using helper function
-                    const modules = await getModulesByCourseId(course.course_id);
+                    const modules = await getModulesByCourseId(course.course_id,userId);
 
                  
                    

@@ -57,7 +57,7 @@ async upsertModule(module, courseId) {
 },
 
 // Not used anywhere in the code 
-async getModulesByCourseId(courseId) {
+async getModulesByCourseId(courseId,userId) {
     return new Promise((resolve, reject) => {
         db.all(
             `SELECT * FROM modules WHERE course_id = ?`,
@@ -67,7 +67,7 @@ async getModulesByCourseId(courseId) {
 
                 try {
                     for (let module of modules) {
-                        module.submodules = await getSubmodulesByModuleId(module.module_id);
+                        module.submodules = await getSubmodulesByModuleId(module.module_id,userId);
                     }
                     resolve(modules);
                 } catch (error) {
