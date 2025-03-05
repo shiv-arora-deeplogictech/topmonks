@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Requests</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"  href="/AdminPanel/navbars/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Placeholder for navbar and sidebar -->
+    <div id="navbar-container"></div>
+
+    <<div id="main">
+        <h1>Instructor Requests</h1>
+        <p>User requests admin to be an instructor.</p>
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"   placeholder="Search by name, requests id...">
+            <button>Search</button>
+        </div>
+
+        <table class="course-list">
+            <thead>
+                <tr>
+                    <th>Requests id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Permission</th>
+                </tr>
+            </thead>
+            <tbody id="course-table-body">
+               
+                <!-- More course rows -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <script src="instructor_req.js"></script>
+</body>
+</html>

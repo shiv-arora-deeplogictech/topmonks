@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Requests</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <img src="/AdminPanel/resources/Logo.png" alt="DLT Logo" class="nav-logo">
+        </div>
+        
+        <div class="nav-right">
+            <a href="/AdminPanel/AllPages/home.html" class="nav-icon"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="nav-icon"><i class="fas fa-bell"></i></a>
+            <a href="#" class="nav-icon"><i class="fas fa-user"></i></a>
+        </div>
+    </nav>
+    
+    <!-- Sidebar -->
+    <div id="mySidenav" class="sidenav">
+        <ul>
+            <li><a href="/AdminPanel/AllPages/home.html"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/AdminPanel/AllPages/ManageUsers.html"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li><a href="/AdminPanel/AllPages/courses.html"><i class="fa-solid fa-book-open"></i> Courses</a></li>
+        </ul>
+    </div>
+
+    <div id="main">
+        
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        function highlightActivePage() {
+            const links = document.querySelectorAll(".sidenav a, .navbar .nav-right a");
+            const currentPath = window.location.pathname;
+
+            console.log("Current Path:", currentPath); // Debugging
+
+            links.forEach(link => {
+                const linkPath = link.getAttribute("href");
+
+                console.log("Checking:", linkPath); // Debugging
+
+                if (currentPath.includes(linkPath) && linkPath !== "#") {
+                    link.classList.add("active");
+                    console.log("Matched:", linkPath); // Debugging
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        }
+
+        highlightActivePage(); // Run on page load
+    });
+    </script>
+
+</body>
+</html>

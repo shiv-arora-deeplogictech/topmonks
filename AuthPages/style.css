@@ -1,0 +1,159 @@
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Lucida Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff;
+}
+
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.left-bar {
+    background: linear-gradient(90deg, rgba(79,180,237,1) 70%, rgba(255,255,255,1) 100%);
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-bar img {
+    width: 50%;
+    max-width: 300px;
+}
+
+.right-bar {
+    background-color: #ffffff;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.wlcmBck, .sign-in-Acc {
+    width: 70%;
+    text-align: left;
+}
+
+.input {
+    width: 70%;
+}
+
+.input input {
+    width: 100%;
+    height: 50px;
+    margin: 10px 0;
+    padding-left: 15px;
+    border-radius: 10px;
+    border: 2px solid #cacaca;
+    font-size: 16px;
+    display: block;
+}
+.signup{
+    width: 70%;
+}
+
+.signup button {
+    width: 103%;
+    height: 50px;
+    margin: 10px 0;
+    padding-left: 15px;
+    font-size: 18px;
+    color: white;
+    background-color: #4FB4ED;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+.signup button:hover {
+    background-color: #444444;
+}
+
+.signup button:active {
+    background-color: #50afc0;
+    transform: translateY(3px);
+}
+
+.signin {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.signin-1 {
+    color: #4FB4ED;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signin-1:hover {
+    color: #444444;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .left-bar {
+        width: 100%;
+        height: 200px;
+    }
+
+    .right-bar {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .wlcmBck, .sign-in-Acc, .input {
+        width: 90%;
+    }
+
+    .signup button {
+        width: 100%;
+    font-size: 16px; 
+    }
+
+    .left-bar img {
+        width: 50%; 
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .left-bar {
+        height: 150px; 
+    }
+
+    .right-bar {
+        padding: 10px; 
+    }
+
+    .input input {
+        height: 40px; 
+        font-size: 14px;
+    }
+
+    .signup button {
+        height: 40px; 
+        font-size: 14px;
+    }
+
+    .left-bar img {
+        width: 40%; 
+        max-width: 150px;
+    }
+}

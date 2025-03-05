@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+#mySidenav {
+  width: 250px; /* Default sidebar width */
+  transition: width 0.5s ease;
+}
+
+#main {
+  margin-left: 250px; /* Default when sidebar is open */
+  padding: 20px;
+  transition: margin-left 0.5s ease, width 0.5s ease;
+  width: auto;/* Adjust width when sidebar is open */
+}
+
+h1{
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+p{
+  color: #4f4e4e;
+}
+ /* Basic Table Styling (Adjust to your design) */
+ .search-container {
+  display: flex;
+  align-items: center;
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 8px;
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+.search-container i {
+  margin-left: 10px;
+  color: gray;
+}
+
+.search-container input {
+  border: none;
+  background: transparent;
+  padding: 10px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+}
+
+.search-container button {
+  background-color: #6f4ef2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.search-container button:hover {
+  background-color: #5a3bd1;
+}
+
+/* Table Styling */
+.course-list {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.course-list th,
+.course-list td {
+  padding: 15px;
+  text-align: left;
+}
+
+.course-list th {
+  background: #f5f5f5;
+  color: #333;
+  font-weight: bold;
+}
+
+.course-list tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.course-list tbody tr:last-child {
+  border-bottom: none;
+}
+
+.course-list tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.publish-button {
+  background-color: #6f4ef2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.publish-button.unpublished {
+  background-color: #ccc;
+  color: black;
+}
+
+.publish-button:hover {
+  opacity: 0.8;
+}
+
+.approve-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.reject-button {
+  background-color: #f44336; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-button:hover, .reject-button:hover {
+  opacity: 0.8;
+}
+/* Style for status column */
+td[data-status="pending"] {
+  color: #ff9800; /* Orange for pending */
+  font-weight: bold;
+}
+
+td[data-status="approved"] {
+  color: #4caf50; /* Green for approved */
+  font-weight: bold;
+}
+
+td[data-status="rejected"] {
+  color: #f44336; /* Red for rejected */
+  font-weight: bold;
+}

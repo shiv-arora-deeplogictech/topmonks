@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Requests</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"  href="/AdminPanel/navbars/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Placeholder for navbar and sidebar -->
+    <div id="navbar-container"></div>
+
+    <<div id="main">
+        <h1>User Details</h1>
+        <p>All users will be displayed including instructors.</p>
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"   placeholder="Search by name, user_id...">
+            <button>Search</button>
+        </div>
+
+        <table class="course-list">
+            <thead>
+                <tr>
+                    <th>UserId</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Created At</th>
+                    <th>Role</th>
+                    <th>Permission</th>
+                </tr>
+            </thead>
+            <tbody id="course-table-body">
+               
+                <!-- More course rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+     document.addEventListener("DOMContentLoaded", async () => {
+    await loadComponent("/AdminPanel/navbars/navbar.html", "navbar-container");
+    attachNavbarScripts(); // Ensure sidebar toggle works after loading
+    highlightActivePage(); // Now this runs after the navbar is loaded
+});
+
+async function loadComponent(url, containerId) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to load ${url}, status: ${response.status}`);
+        }
+        const data = await response.text();
+        document.getElementById(containerId).innerHTML = data;
+    } catch (error) {
+        console.error(`Error loading ${url}:`, error);
+    }
+}
+
+function attachNavbarScripts() {
+    const sidenav = document.getElementById("mySidenav");
+    const main = document.getElementById("main");
+    const menuIcon = document.querySelector(".nav-left .nav-icon");
+
+    if (!sidenav || !menuIcon) {
+        console.error("❌ Navbar or Sidebar not loaded properly.");
+        return;
+    } else {
+        console.log("✅ Navbar and Sidebar loaded successfully.");
+    }
+
+    menuIcon.addEventListener("click", () => {
+        const isClosed = sidenav.classList.toggle("closed");
+        main.classList.toggle("sidebar-closed", isClosed);
+    });
+}
+
+function highlightActivePage() {
+    const links = document.querySelectorAll(".sidenav a");
+    const currentPage = window.location.pathname.toLowerCase();
+
+    links.forEach(link => {
+        const linkPath = link.getAttribute("href").toLowerCase();
+        console.log(`Checking: ${linkPath} against ${currentPage}`);
+
+        if (currentPage.includes(linkPath) && linkPath !== "#") {
+            link.classList.add("active");
+            console.log(`✅ Matched: ${linkPath}`);
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+    </script>
+</body>
+</html>
