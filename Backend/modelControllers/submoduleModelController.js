@@ -57,8 +57,8 @@ async getSubmodulesByModuleId(moduleId, userId) {
                 if (err) return reject(err);
                 if (!course) return resolve([]);
 
-                const enrolledUsers = JSON.parse(course.enrolled || "[]"); // Parse enrolled users
-                const isEnrolled = enrolledUsers.includes(userId); // Check if user is enrolled
+                const enrolledUsers = JSON.parse(course.enrolled || "[]"); 
+                const isEnrolled = enrolledUsers.includes(userId); 
 
                 db.all(
                     `SELECT submodule_id, submodule_name, submodule_description, module_id, created_at 
