@@ -167,8 +167,27 @@ async resetPassword (req, res) {
             res.writeHead(429);
             return res.end(JSON.stringify({ code: 429, message: "Passwords do not match." }));
         }
-
-        const decoded = jwt.verify(token, RESET_SECRET_KEY);
+        let decoded;
+        try {
+            decoded = jwt.verify(token, RESET_SECRET_KEY);
+        } catch (error) {
+            if (error.name === "JsonWebTokenError") {
+                res.writeHead(401);
+                return res.end(JSON.stringify({ code: 401, message: "Invalid or tampered token. Please request a new reset token." }));
+            } else if (error.name === "TokenExpiredError") {
+                res.writeHead(401);
+                return res.end(JSON.stringify({ code: 401, message: "Reset token has expired. Please request a new one." }));
+            } else {
+                res.writeHead(500);
+                return res.end(JSON.stringify({ code: 500, message: "Token verification failed. Try again." }));
+            }
+        }
+        
+        const email = decoded.email;
+        if(!User.findByEmail(email)){
+            res.writeHead(404);
+            return res.end(JSON.stringify({ code: 404, message: "Wrong token provided"}));
+        }
         const hashedPassword = await bcrypt.hash(new_password, 10);
 
         const success = await User.resetPassword(token, hashedPassword);
