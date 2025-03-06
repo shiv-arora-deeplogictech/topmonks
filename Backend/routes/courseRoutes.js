@@ -30,10 +30,6 @@ function courseRoutes(req, res) {
         return courseController.getCoursesForCards(req, res);
     }
 
-    if (req.method === "GET" && req.url.startsWith("/course/getAllCourses")) {
-        return courseController.getAllCourses(req, res);
-    }
-
     if (req.method === "GET" && req.url.startsWith("/user/course/getCoursesByCategory")) {
         return courseController.getCoursesByCategory(req, res);
     }

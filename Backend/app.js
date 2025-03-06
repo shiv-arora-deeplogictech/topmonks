@@ -7,6 +7,9 @@ const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const AuthMiddleware = require("./middlewares/authMiddleware");
 const fs=require('fs');
+
+const profileRoutes = require("./routes/profileRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 const options = {
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.crt')
@@ -30,16 +33,24 @@ const server = https.createServer(options,(req, res) => {
     } else if (req.url.startsWith("/user")) {
         return userRoutes(req, res); // Handle user-related routes
     } else if (req.url.startsWith("/instructor")) {
-        return instructorRoutes(req, res); // Handle instructor separately
+        return handleAuth(['instructor'], () => instructorRoutes(req, res));// Handle instructor separately
     } else if(req.url.startsWith("/course")){
         return courseRoutes(req,res);
     } else if(req.url.startsWith("/category")){
         return categoryRoutes(req,res);
-    } else if(req.url.startsWith("/auth")){
+    }
+    else if(req.url.startsWith("/quiz")){
+        return quizRoutes(req,res);
+    }
+     else if(req.url.startsWith("/auth")){
         authRoutes(req,res);
     } else if (req.url.startsWith("/admin")) {
         handleAuth(['admin'], () => adminRoutes(req, res));
-    } else {
+    }
+    else if (req.url.startsWith("/profile")) {
+        return profileRoutes(req, res); 
+    } 
+    else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Route Not Found" }));
     }
