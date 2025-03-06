@@ -9,13 +9,10 @@ function quizRoutes(req,res){
         return quizController.updateQuiz(req, res);
     }
 
-    if (req.method === "GET" && req.url.startsWith("/instructor/quiz/getQuiz")) {
+    if (req.method === "GET" && req.url.startsWith("/quiz/getQuiz")) {
         return quizController.getQuiz(req, res);
     }
 
-    if (req.method === "GET" && req.url.split("?")[0] === "/user/quiz/getQuiz") {
-        return quizController.getQuiz(req, res);
-    }
     
     if (req.method === "GET" && req.url.split("?")[0].startsWith("/user/quiz/getQuizDuration")) {
         return quizController.getQuizDuration(req, res);

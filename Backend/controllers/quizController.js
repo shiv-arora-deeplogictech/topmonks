@@ -34,7 +34,7 @@ const quizController = {
     },
 
     async getQuiz(req, res) {
-        const courseId = req.url.split("/")[4]; 
+        const courseId = req.url.split("/")[3]; 
        
         try {
             if (!courseId) {
