@@ -57,11 +57,16 @@ async getSubmodulesByModuleId(moduleId, userId) {
                 if (err) return reject(err);
                 if (!course) return resolve([]);
 
-                const enrolledUsers = JSON.parse(course.enrolled || "[]"); 
+                let enrolledUsers = [];
+                if (course.enrolled) {
+                    enrolledUsers = course.enrolled.includes(",") 
+                        ? course.enrolled.split(",").map(Number)  // Convert CSV string to array of numbers
+                        : [Number(course.enrolled)];  // Single user ID case
+                } 
                 const isEnrolled = enrolledUsers.includes(userId); 
 
                 db.all(
-                    `SELECT submodule_id, submodule_name, submodule_description, module_id, created_at 
+                    `SELECT submodule_id, submodule_name, submodule_description, module_id,
                     ${isEnrolled ? ', video' : ''} 
                      FROM submodules 
                      WHERE module_id = ?`,
