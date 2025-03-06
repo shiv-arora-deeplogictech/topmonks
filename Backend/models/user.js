@@ -4,6 +4,7 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
+        profile_img TEXT,
         role TEXT DEFAULT NULL, 
         password TEXT NOT NULL,
         reset_token TEXT, 
