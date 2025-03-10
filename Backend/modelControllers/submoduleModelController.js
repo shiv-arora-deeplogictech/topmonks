@@ -49,37 +49,61 @@ async upsertSubmodule(submodule, moduleId) {
 // Not used anywhere in the code
 async getSubmodulesByModuleId(moduleId, userId) {
     return new Promise((resolve, reject) => {
+        // Get the enrolled list from the course that contains this module
         db.get(
             `SELECT enrolled FROM courses WHERE course_id = 
                 (SELECT course_id FROM modules WHERE module_id = ?)`,
             [moduleId],
             (err, course) => {
-                if (err) return reject(err);
-                if (!course) return resolve([]);
+                if (err) {
+                    console.error("Database error while fetching enrolled users:", err);
+                    return reject(err);
+                }
+
+                if (!course) {
+                    console.log(`No course found for module_id ${moduleId}`);
+                    return resolve([]); // No course, no submodules
+                }
 
                 let enrolledUsers = [];
-                if (course.enrolled) {
-                    enrolledUsers = course.enrolled.includes(",") 
-                        ? course.enrolled.split(",").map(Number)  // Convert CSV string to array of numbers
-                        : [Number(course.enrolled)];  // Single user ID case
-                } 
-                const isEnrolled = enrolledUsers.includes(userId); 
 
-                db.all(
-                    `SELECT submodule_id, submodule_name, submodule_description, module_id,
+                try {
+                    // Parse the enrolled JSON string to get the array
+                    enrolledUsers = course.enrolled
+                        ? JSON.parse(course.enrolled)
+                        : [];
+                } catch (parseError) {
+                    console.error(`Error parsing enrolled field for course:`, parseError);
+                    return reject(parseError);
+                }
+
+                // Check if the user is enrolled in this course
+                const isEnrolled = Array.isArray(enrolledUsers) &&
+                enrolledUsers.includes(userId); 
+
+                console.log(`User ${userId} is ${isEnrolled ? '' : 'NOT '}enrolled in course`);
+
+                // Select submodules, include 'video' only if enrolled
+                const query = `
+                    SELECT submodule_id, submodule_name, submodule_description, module_id
                     ${isEnrolled ? ', video' : ''} 
-                     FROM submodules 
-                     WHERE module_id = ?`,
-                    [moduleId],
-                    (err, submodules) => {
-                        if (err) return reject(err);
-                        resolve(submodules);
+                    FROM submodules 
+                    WHERE module_id = ?
+                `;
+
+                db.all(query, [moduleId], (err, submodules) => {
+                    if (err) {
+                        console.error("Database error while fetching submodules:", err);
+                        return reject(err);
                     }
-                );
+
+                    resolve(submodules);
+                });
             }
         );
     });
 }
+
 
 };
 

@@ -245,42 +245,68 @@ async getCourseInfoModel(courseId,userId) {
 },
 
 async getCoursesEnrolled(userId) {
-    console.log("Checking enrolled courses for userId:", userId); // Debugging
     return new Promise((resolve, reject) => {
-        db.all(
-            `SELECT * FROM courses 
-             WHERE instr(',' || enrolled || ',', ',' || ? || ',') > 0`, 
-            [userId],
-            (err, rows) => {
-                if (err) {
-                    console.error("Database error:", err);
-                    return reject(err);
-                }
-                console.log("Database result:", rows); // Debugging
-                resolve(rows);
+        db.all(`SELECT * FROM courses`, [], (err, rows) => {
+            if (err) {
+                console.error("Database error:", err);
+                return reject(err);
             }
-        );
+
+            const enrolledCourses = [];
+
+            rows.forEach((course) => {
+                try {
+                    const enrolledUsers = JSON.parse(course.enrolled);
+                
+                    if (Array.isArray(enrolledUsers) && enrolledUsers.includes(userId)) {
+                        enrolledCourses.push(course);
+                    }
+                } catch (parseError) {
+                    console.error(`Error parsing enrolled field for course_id ${course.course_id}:`, parseError);
+                }
+            });
+            resolve(enrolledCourses);
+        });
     });
 },
 
 async getUnenrolledCourses(userId) {
-    console.log("Fetching unenrolled courses for userId:", userId); // Debugging
+    
     return new Promise((resolve, reject) => {
-        db.all(
-            `SELECT * FROM courses 
-             WHERE (enrolled IS NULL OR instr(',' || enrolled || ',', ',' || ? || ',') = 0)`, 
-            [userId],
-            (err, rows) => {
-                if (err) {
-                    console.error("Database error:", err);
-                    return reject(err);
-                }
-                console.log("Unenrolled courses:", rows); // Debugging
-                resolve(rows);
+        db.all(`SELECT * FROM courses`, [], (err, rows) => {
+            if (err) {
+                console.error("Database error:", err);
+                return reject(err);
             }
-        );
+
+            const unenrolledCourses = [];
+
+            rows.forEach((course) => {
+                try {
+                    // Parse enrolled users as JSON
+                    const enrolledUsers = course.enrolled
+                        ? JSON.parse(course.enrolled)
+                        : [];
+
+                    // If not enrolled, add to unenrolled courses list
+                    if (
+                        Array.isArray(enrolledUsers) &&
+                        !enrolledUsers.includes(userId)
+                    ) {
+                        unenrolledCourses.push(course);
+                    }
+                } catch (parseError) {
+                    console.error(
+                        `Error parsing enrolled field for course_id ${course.course_id}:`,
+                        parseError
+                    );
+                }
+            });
+            resolve(unenrolledCourses);
+        });
     });
 },
+
 
 async getPendingCourses(userId) {
     return new Promise((resolve, reject) => {
@@ -340,27 +366,41 @@ async enrollUserModel(courseId, userId) {
             if (err) return reject(err);
             if (!course) return reject(new Error("Course not found"));
 
-            let enrolledUsers = course.enrolled ? course.enrolled.split(",").map(id => id.trim()) : [];
+            // Parse the enrolled field (always expected to be a JSON string)
+            let enrolledUsers=[];
+            try {
+                enrolledUsers = Array.isArray(JSON.parse(course.enrolled))?JSON.parse(course.enrolled):[];
+            } catch (parseError) {
+                return reject(new Error("Invalid enrolled data format"));
+            }
 
-            if (enrolledUsers.includes(userId.toString())) {
+            // Check if user is already enrolled
+            if (enrolledUsers.includes(userId)) {
                 return reject(new Error("User already enrolled"));
             }
 
-            enrolledUsers.push(userId.toString()); // Add userId to the list
+            // Add userId to the array
+            enrolledUsers.push(userId);
 
-            const updatedEnrolled = enrolledUsers.join(","); // Convert back to comma-separated string
+            // Convert back to JSON string
+            const updatedEnrolled = JSON.stringify(enrolledUsers);
 
+            // Update the enrolled field in the database
             db.run(
                 `UPDATE courses SET enrolled = ? WHERE course_id = ?`,
                 [updatedEnrolled, courseId],
                 function (err) {
                     if (err) return reject(err);
-                    resolve({ message: "User enrolled successfully", enrolled: updatedEnrolled });
+                    resolve({
+                        message: "User enrolled successfully",
+                        enrolled: enrolledUsers,
+                    });
                 }
             );
         });
     });
 }
+
 
 
 
