@@ -392,6 +392,9 @@ const courseController =
                     description: course.course_description,
                     instructor: course.instructor,
                     duration: course.duration,
+                    thumbnail: course.thumbnail,
+                    instructor_img: course.instructor_img,
+
                     // enrolled: "no", // User is not enrolled
                     rating: course.rating || 4.5 // Default rating if missing
                 }))

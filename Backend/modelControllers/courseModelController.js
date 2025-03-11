@@ -202,7 +202,7 @@ async getCoursesByCategoryModel(categoryId) {
     return new Promise((resolve, reject) => {
         db.all(
             `SELECT courses.course_id, courses.course_title, courses.course_description, 
-                    courses.instructor, courses.duration, courses.enrolled
+                    courses.instructor, courses.duration, courses.enrolled,courses.thumbnail,courses.instructor_img
              FROM courses   
              JOIN categories ON courses.category_id = categories.category_id
              WHERE categories.category_id = ? AND courses.status = 1`, // Fetch active courses only
