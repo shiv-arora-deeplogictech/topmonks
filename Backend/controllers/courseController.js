@@ -405,6 +405,48 @@ const courseController =
             return res.end(JSON.stringify({ code: 500, message: err.message }));
         }
     },
+    async getCoursesByCategoryLanding(req, res) {
+        try {
+
+            const parts = req.url.split("/");
+            const categoryId = parts[parts.length - 1];
+
+            if (!categoryId || isNaN(categoryId)) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ code: 400, message: "Bad Request: Invalid category ID" }));
+            }
+
+
+            const rows = await courseModelController.getCoursesByCategoryModel(categoryId);
+            if (rows.length === 0) {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ code: 404, message: "No course found" }));
+            }
+
+            res.setHeader("status", 200)
+            res.end(JSON.stringify({
+                code: 200,
+                message: "Fetched courses Successfully",
+                categoryTitle: rows[0].category_title, // Get category title from DB result
+                courses: rows.map(course => ({
+                    id: course.course_id,
+                    courseTitle: course.course_title,
+                    description: course.course_description,
+                    instructor: course.instructor,
+                    duration: course.duration,
+                    thumbnail: course.thumbnail,
+                    instructor_img: course.instructor_img,
+
+                    // enrolled: "no", // User is not enrolled
+                    rating: course.rating || 4.5 // Default rating if missing
+                }))
+            }));
+
+        } catch (err) {
+            res.setHeader("status", 500)
+            return res.end(JSON.stringify({ code: 500, message: err.message }));
+        }
+    },
 
     async getCourseInfo(req, res) {
         const courseId = req.url.split("/")[4];

@@ -188,7 +188,7 @@ async resetPassword (req, res) {
             res.writeHead(404);
             return res.end(JSON.stringify({ code: 404, message: "Wrong token provided"}));
         }
-        const hashedPassword = await bcrypt.hash(new_password, 10);
+        const hashedPassword = await bcrypt.hash(new_password,10);
 
         const success = await User.resetPassword(token, hashedPassword);
         if (!success) {

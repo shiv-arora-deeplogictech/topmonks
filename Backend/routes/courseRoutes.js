@@ -33,6 +33,9 @@ function courseRoutes(req, res) {
     if (req.method === "GET" && req.url.startsWith("/user/course/getCoursesByCategory")) {
         return courseController.getCoursesByCategory(req, res);
     }
+    if (req.method === "GET" && req.url.startsWith("/user/course/landingPage")) {
+        return courseController.getCoursesByCategoryLanding(req, res);
+    }
 
     if (req.method === "GET" && req.url.startsWith("/user/course/getCourseInfo")) {
         return courseController.getCourseInfo(req, res);
