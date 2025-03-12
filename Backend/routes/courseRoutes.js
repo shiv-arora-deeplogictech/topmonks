@@ -22,10 +22,6 @@ function courseRoutes(req, res) {
         return courseController.togglePublishCourse(req, res);
     }
 
-    if (req.method === "GET" && req.url.startsWith("/course/getAllCourses")) {
-        return courseController.getAllCourses(req, res);
-    }
-
     if (req.method === "GET" && req.url.startsWith("/user/course/getCoursesForCards")) {  
         return courseController.getCoursesForCards(req, res);
     }

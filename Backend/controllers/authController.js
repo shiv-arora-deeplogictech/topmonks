@@ -96,8 +96,9 @@ async login (req, res) {
             }
 
         const token = resetTokens.generateToken(user.id, user.email, user.name, user.role);
+        const role = user.role;
         res.writeHead(200);
-        res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
+        res.end(JSON.stringify({ code: 200, message: "Login Successful", token ,role}));
     } catch (error) {
         res.writeHead(500);
         res.end(JSON.stringify({ code: 500, message: error.message }));
