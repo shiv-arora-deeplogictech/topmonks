@@ -23,11 +23,10 @@ const InstructorRequest = {
     },
 
     async approve(user_id,user) {
-        const hashedPassword = await bcrypt.hash(user.password, 10);
         return new Promise((resolve, reject) => {
             
             db.run('INSERT INTO users (name, email, password, role, profile_img) VALUES (?, ?, ?, "instructor", ?)',
-                [user.name, user.email, hashedPassword,defaultProfile.profile_img], function (err) {
+                [user.name, user.email, user.password,defaultProfile.profile_img], function (err) {
                     if (err) return reject(err);
                     db.run('UPDATE instructor_requests SET status = "approved" WHERE request_id = ?', [user_id], function (err) {
                         if (err) reject(err);

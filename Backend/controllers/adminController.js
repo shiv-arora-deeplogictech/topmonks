@@ -17,17 +17,20 @@ const AdminController = {
             let body = '';
             req.on('data', chunk => body += chunk.toString());
             req.on('end', async () => {
+
                 const { user_id, action, user } = JSON.parse(body);
 
                 // Fetch user details from instructor_requests
                 const instructor = await InstructorRequest.getRequestById(user_id);
+                console.log(user_id);
+                console.log(instructor);
                 if (!instructor || instructor.status !== 'pending') {
                     return res.writeHead(404).end(JSON.stringify({ code: 404, message: 'User not found or not pending approval' }));
                 }
 
                 if (action === 'approve') {
                     // Move user to the users table with role 'instructor'
-                    await InstructorRequest.approve(user_id,user);
+                    await InstructorRequest.approve(user_id,instructor);
                     return res.writeHead(200).end(JSON.stringify({
                         code: 200,
                         message: 'Instructor request approved',

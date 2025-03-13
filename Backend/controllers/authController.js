@@ -121,8 +121,9 @@ async adminLogin (req, res) {
 
             // Generate JWT token
             const token = resetTokens.generateToken(user.id, user.email, user.name, user.role);
+            const role = user.role;
             res.writeHead(200);
-            res.end(JSON.stringify({ code: 200, message: "Login Successful", token }));
+            res.end(JSON.stringify({ code: 200, message: "Login Successful", token, role}));
         });
     }
     catch (error) {
