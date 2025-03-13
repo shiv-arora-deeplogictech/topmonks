@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load the navbar and sidebar
+    // Load the navbar and sidebar, then attach scripts after it's loaded
     await loadComponent("/AdminPanel/navbars/navbar.html", "navbar-container");
-    attachNavbarScripts(); // Ensure sidebar toggle works after loading
+    attachNavbarScripts(); // Now runs AFTER navbar is loaded
+
     highlightActivePage(); // Highlight the active page in the sidebar
 
     // Fetch and display instructor requests
     await fetchAndDisplayInstructorRequests();
-
+    
     // Add event listeners for approve/reject buttons
     document.addEventListener("click", async (event) => {
         if (event.target.classList.contains("approve-button")) {
@@ -28,6 +29,12 @@ async function loadComponent(url, containerId) {
         }
         const data = await response.text();
         document.getElementById(containerId).innerHTML = data;
+        
+        return new Promise((resolve) => {
+            setTimeout(resolve, 100); // Small delay to ensure DOM updates
+            resolve();
+        });
+
     } catch (error) {
         console.error(`Error loading ${url}:`, error);
     }
@@ -61,7 +68,7 @@ function highlightActivePage() {
         const linkPath = link.getAttribute("href").toLowerCase();
         console.log(`Checking: ${linkPath} against ${currentPage}`);
 
-        if (currentPage.includes(linkPath)) {
+        if (currentPage.endsWith(linkPath)) { // Ensures exact match
             link.classList.add("active");
             console.log(`✅ Matched: ${linkPath}`);
         } else {
@@ -73,12 +80,12 @@ function highlightActivePage() {
 // Function to fetch instructor requests from the backend
 async function fetchAndDisplayInstructorRequests() {
     try {
-        /*const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token"); // Ensure token is declared
         if (!token) {
             alert("You are not logged in. Redirecting to login page...");
             window.location.href = "/AdminPanel/AuthPages/login.html";
             return;
-        }*/
+        }
 
         const response = await fetch("https://localhost:5000/admin/main", {
             method: "GET",
@@ -160,14 +167,14 @@ function populateTable(requests) {
 // Function to handle permission changes (approve/reject)
 async function handlePermissionChange(requestId, action) {
     try {
-        /*const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token"); // Ensure token is declared
         if (!token) {
             alert("You are not logged in. Redirecting to login page...");
             window.location.href = "/AdminPanel/AuthPages/login.html";
             return;
-        }*/
+        }
 
-        const response = await fetch(`https://localhost:5000/admin/main`, {
+        const response = await fetch("https://localhost:5000/admin/main", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

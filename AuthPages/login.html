@@ -14,7 +14,7 @@
             </div>
 
             <div class="right-bar">
-                  <p class="wlcmBck">Welcome back</p>
+                  <p class="wlcmBck"><strong>Welcome back</strong></p>
                   <p class="sign-in-Acc">Login to your account</p>
 
                   <div class="input">
@@ -23,8 +23,9 @@
                   </div>
 
                   <div class="forgot">
-                        <u>Forgot Password?</u>
+                        <u onclick="openForgotPassword()">Forgot Password?</u>
                   </div>
+                  
 
                   <div class="signup" >
                         <button id="login-btn">Login</button>
@@ -38,5 +39,15 @@
             </div>
       </div>
       <script src="auth.js"></script>
+      <div id="forgotPasswordModal" class="modal">
+            <div class="modal-content">
+                  <span class="close" onclick="closeForgotPassword()">&times;</span>
+                  <h2>Reset Password</h2>
+                  <p>Enter your email to reset your password</p>
+                  <input type="email" id="resetEmail" placeholder="Enter your email">
+                  <button onclick="sendResetLink()">Send Reset Link</button>
+            </div>
+      </div>
+      
 </body>
 </html>

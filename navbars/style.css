@@ -45,10 +45,11 @@
 
 /* Sidebar (Sidenav) */
 .sidenav {
+  display: flex;
   height: 100%;
-  width: 250px; /* Sidebar starts open */
+  width: 250px;
   position: fixed;
-  top: 8vh; /* Adjusted for navbar height */
+  top: 8vh;
   left: 0;
   background-color: #fff;
   overflow-x: hidden;
@@ -107,7 +108,7 @@
 .super-admin {
   display: flex;
   justify-content: center;
-  
+  margin-top: auto;
   color: rgb(1, 0, 0);
   font-weight: bold;
   font-size: 25px;
