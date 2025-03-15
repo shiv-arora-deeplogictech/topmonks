@@ -1,5 +1,6 @@
 const db = require("../models/courseModel");
-const { getModulesByCourseId } = require("./moduleModelController");
+const moduleModelController = require("./moduleModelController");
+
 
 const courseModelController = {
     
@@ -229,7 +230,7 @@ async getCourseInfoModel(courseId,userId) {
 
                 try {
                     // Fetch modules and submodules using helper function
-                    const modules = await getModulesByCourseId(course.course_id,userId);
+                    const modules = await moduleModelController.getModulesByCourseId(course.course_id,userId);
 
                  
                    
@@ -246,7 +247,7 @@ async getCourseInfoModel(courseId,userId) {
 
 async getCoursesEnrolled(userId) {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT * FROM courses`, [], (err, rows) => {
+        db.all(`SELECT * FROM courses`, [], async (err, rows) => {
             if (err) {
                 console.error("Database error:", err);
                 return reject(err);
@@ -254,17 +255,25 @@ async getCoursesEnrolled(userId) {
 
             const enrolledCourses = [];
 
-            rows.forEach((course) => {
+            for (const course of rows) {
                 try {
                     const enrolledUsers = JSON.parse(course.enrolled);
-                
+                    
                     if (Array.isArray(enrolledUsers) && enrolledUsers.includes(userId)) {
-                        enrolledCourses.push(course);
+                        // Fetch modules for the enrolled course
+                        const modules = await moduleModelController.getModulesOnly(course.course_id);
+                        
+                        // Add modules array to the course object
+                        enrolledCourses.push({
+                            ...course,
+                            modules: modules
+                        });
                     }
                 } catch (parseError) {
                     console.error(`Error parsing enrolled field for course_id ${course.course_id}:`, parseError);
                 }
-            });
+            }
+
             resolve(enrolledCourses);
         });
     });

@@ -713,7 +713,7 @@ const courseController =
             try {
                     
                 const { courseId } = JSON.parse(body); // Get courseId from request body
-    
+                console.log("courseId",courseId)
                 if (!userId) {
                     res.setHeader("status", 400);
                     return res.end(JSON.stringify({ code: 400, message: "User ID is required" }));

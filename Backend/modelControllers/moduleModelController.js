@@ -76,7 +76,22 @@ async getModulesByCourseId(courseId,userId) {
             }
         );
     });
+},
+
+
+// Helper function to get modules by course ID
+async getModulesOnly(courseId) {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT * FROM modules WHERE course_id = ?`, [courseId], (err, rows) => {
+            if (err) {
+                console.error(`Error fetching modules for course_id ${courseId}:`, err);
+                return reject(err);
+            }
+            resolve(rows);
+        });
+    });
 }
+
 };
 
 
