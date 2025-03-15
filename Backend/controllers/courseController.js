@@ -259,7 +259,29 @@ const courseController =
 
     // ✅ Fix: Get instructor courses by instructor_id instead of name
     async getInstructorCourses(req, res) {
-        const instructorId = req.url.split("/")[4];
+        const authHeader = req.headers["authorization"];
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ code: 401, message: "Unauthorized: Missing token" }));
+        }
+
+        const token = authHeader.split(" ")[1];
+        // Verify Token
+        let decoded;
+        try {
+            decoded = jwt.verify(token, SECRET_KEY);
+        } catch (err) {
+            console.error("JWT Verification Error:", err);
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ message: 'Forbidden: Invalid token' }));
+        }
+
+        const instructorId = decoded.id;
+        // console.log(userId); 
+        if (!instructorId) {
+            res.writeHead(403, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ code: 403, message: "Forbidden: Invalid token payload" }));
+        }
         // console.log(instructorId);
 
         try {
